@@ -52,7 +52,6 @@ class PigeonSchema extends Schema {
       table.integer("dob").notNullable();
       table.integer("growth").notNullable();
       table
-        .string("life_stage")
         .integer("life_stage_id")
         .unsigned()
         .notNullable()
