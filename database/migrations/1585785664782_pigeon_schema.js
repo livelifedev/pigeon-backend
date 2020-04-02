@@ -29,7 +29,6 @@ class PigeonSchema extends Schema {
         .inTable("users")
         .onDelete("cascade");
       table.string("name", 80).notNullable();
-      table.text("bio");
       table.string("flock", 80).notNullable();
       table.enu("gender", GENDERS).notNullable();
       table.enu("region", REGIONS).notNullable();
@@ -50,6 +49,7 @@ class PigeonSchema extends Schema {
         .references("id")
         .inTable("elements");
       table.integer("dob").notNullable();
+      table.text("bio");
       table.integer("growth").notNullable();
       table
         .integer("life_stage_id")
@@ -61,6 +61,7 @@ class PigeonSchema extends Schema {
       table.enu("hunger", HUNGERS).notNullable();
       table.integer("appetite").notNullable();
       table.json("feed_scehdule");
+      table.integer("last_fed").notNullable();
       table.timestamps();
     });
   }
