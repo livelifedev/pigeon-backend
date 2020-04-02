@@ -7,6 +7,7 @@ class LifeStageSchema extends Schema {
   up() {
     this.create("life_stages", table => {
       table.increments();
+      table.integer("stage").notNullable();
       table.string("name", 80).notNullable();
       table.text("description");
       table.timestamps();
