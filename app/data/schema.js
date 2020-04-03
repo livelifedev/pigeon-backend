@@ -1,6 +1,7 @@
 "use strict";
 
 const { makeExecutableSchema } = require("graphql-tools");
+const resolvers = require("./resolvers");
 
 // Define our schema using the GraphQL schema language
 const typeDefs = `
@@ -22,11 +23,34 @@ type Query {
   # list of all subBreeds
   subBreeds: [SubBreed]
 }
+
+# root mutation for Guild of Pigeon Breeders app
 type Mutation {
+  # user login
   login (email: String!, password: String!): String
-  createUser (username: String!, email: String!, password: String!): User
-  addPost (title: String!, content: String!): Post
+  # create a new user
+  createUser (userInput: $UserInput): User
+  # create a new pigeon
+  createPigeon (pigeonInput: $PigeonInput): Pigeon
+  # add a feeding schedule to a pigeon
+  addFeedingSchedule (pigeonId: Int!, content: String!): String
 }
+
+input UserInput {
+  breederName: String!
+  email: String!
+  password: String!
+}
+input PigeonInput {
+  name: String!
+  flock: String!
+  gender: String!
+  region: String!
+  subBreed: String!
+  element: String!
+  dob: Int!
+}
+
 type User {
   id: Int!
   breederName: String!
@@ -69,7 +93,5 @@ type SubBreed {
   description: String!
 }
 `;
-
-const resolvers = require("./resolvers");
 
 module.exports = makeExecutableSchema({ typeDefs, resolvers });
