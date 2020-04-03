@@ -69,7 +69,7 @@ class InitialSeeder {
         health: "Godly",
         hunger: "neutral",
         appetite: 4,
-        feed_scehdule: null,
+        feed_schedule: null,
         last_fed: 1000000000
       }
     ];
