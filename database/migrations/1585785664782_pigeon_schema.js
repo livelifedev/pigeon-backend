@@ -60,7 +60,7 @@ class PigeonSchema extends Schema {
       table.string("health").notNullable();
       table.enu("hunger", HUNGERS).notNullable();
       table.integer("appetite").notNullable();
-      table.json("feed_scehdule");
+      table.json("feed_schedule");
       table.integer("last_fed").notNullable();
       table.timestamps();
     });

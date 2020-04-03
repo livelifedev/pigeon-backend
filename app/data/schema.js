@@ -56,6 +56,7 @@ type User {
   breederName: String!
   rank: String!
   email: String!
+  pigeons: [Pigeon]
 }
 type Pigeon {
   id: Int!
