@@ -16,6 +16,8 @@ type Query {
   users: [User]
   # an individual user
   user(id: ID!): User
+  # retrieve logged in user
+  profile: User
   # list of all pigeons
   pigeons: [Pigeon]
   # an individual pigeon

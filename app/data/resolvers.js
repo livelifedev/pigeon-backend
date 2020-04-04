@@ -19,6 +19,17 @@ const resolvers = {
     user(_, { id }) {
       return User.find(id);
     },
+    // Get a logged in user
+    async profile(_, __, { auth }) {
+      try {
+        await auth.check();
+        const user = await auth.getUser();
+
+        return user;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
     // Fetch all pigeons
     async pigeons() {
       const pigeons = await Pigeon.all();
