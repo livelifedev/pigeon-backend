@@ -58,12 +58,15 @@ const resolvers = {
       return token;
     },
     // Create new user
-    createUser(_, { user }) {
-      return User.create({
+    async createUser(_, { user }, { auth }) {
+      await User.create({
         breeder_name: user.breederName,
         email: user.email,
         password: user.password
       });
+
+      const { token } = await auth.attempt(user.email, user.password);
+      return token;
     },
     // Create new pigeon
     async createPigeon(_, { pigeon }, { auth }) {
