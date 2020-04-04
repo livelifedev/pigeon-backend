@@ -16,9 +16,8 @@ const resolvers = {
       return users.toJSON();
     },
     // Get a user by ID
-    async user(_, { id }) {
-      const user = await User.find(id);
-      return user.toJSON();
+    user(_, { id }) {
+      return User.find(id);
     },
     // Fetch all pigeons
     async pigeons() {
@@ -26,9 +25,8 @@ const resolvers = {
       return pigeons.toJSON();
     },
     // Get a pigeon by its ID
-    async pigeon(_, { id }) {
-      const pigeon = await Pigeon.find(id);
-      return pigeon.toJSON();
+    pigeon(_, { id }) {
+      return Pigeon.find(id);
     },
     // Fetch all elements
     async elements() {
@@ -41,41 +39,7 @@ const resolvers = {
       return subBreeds.toJSON();
     }
   },
-  User: {
-    async pigeons(user) {
-      const userInstance = new User();
-      userInstance.newUp(user);
-      const { rows } = await userInstance.pigeons().fetch();
-      return rows;
-    },
-    breederName(user) {
-      return user.breeder_name;
-    }
-  },
-  Pigeon: {
-    owner(pigeon) {
-      const pigeonInstance = new Pigeon();
-      pigeonInstance.newUp(pigeon);
-      return pigeonInstance.user().fetch();
-    },
-    async subBreed(pigeon) {
-      const subBreed = await SubBreed.find(pigeon.sub_breed_id);
-      return subBreed.name;
-    },
-    async element(pigeon) {
-      const element = await Element.find(pigeon.element_id);
-      return element.name;
-    },
-    primaryBreed(pigeon) {
-      return pigeon.primary_breed;
-    },
-    feedSchedule(pigeon) {
-      return pigeon.feed_schedule;
-    },
-    lastFed(pigeon) {
-      return pigeon.last_fed;
-    }
-  },
+
   Mutation: {
     // Handles user login
     async login(_, { email, password }, { auth }) {
@@ -93,9 +57,7 @@ const resolvers = {
     // Create new pigeon
     async createPigeon(_, { pigeon }, { auth }) {
       try {
-        // Check if user is logged in
         await auth.check();
-        // Get the authenticated user
         const user = await auth.getUser();
 
         return Pigeon.create({
@@ -111,32 +73,63 @@ const resolvers = {
           last_fed: pigeon.dob
         });
       } catch (error) {
-        // Throw error if user is not authenticated
-        throw new Error("Missing or invalid jwt token");
+        throw new Error(error);
+      }
+    },
+    async addFeedingSchedule(_, { pigeonId, content }, { auth }) {
+      try {
+        await auth.check();
+        const user = await auth.getUser();
+        const pigeon = await Pigeon.find(pigeonId);
+
+        if (user.id !== pigeon.user_id)
+          throw new Error("Pigeon does not belong to you");
+
+        pigeon.feed_schedule = JSON.stringify(content);
+
+        return pigeon.save();
+      } catch (error) {
+        throw new Error(error);
       }
     }
-    //   User: {
-    //     // Fetch all posts created by a user
-    //     async posts(userInJson) {
-    //       // Convert JSON to model instance
-    //       const user = new User();
-    //       user.newUp(userInJson);
+  },
 
-    //       const posts = await user.posts().fetch();
-    //       return posts.toJSON();
-    //     }
-    //   },
-    //   Post: {
-    //     // Fetch the author of a particular post
-    //     async user(postInJson) {
-    //       // Convert JSON to model instance
-    //       const post = new Post();
-    //       post.newUp(postInJson);
+  User: {
+    async pigeons(user) {
+      const userInstance = new User();
+      userInstance.newUp(user);
+      const { rows } = await userInstance.pigeons().fetch();
+      return rows;
+    },
+    breederName(user) {
+      return user.breeder_name;
+    }
+  },
 
-    //       const user = await post.user().fetch();
-    //       return user.toJSON();
-    //     }
-    //   }
+  Pigeon: {
+    owner(pigeon) {
+      return User.find(pigeon.user_id);
+    },
+    async subBreed(pigeon) {
+      const subBreed = await SubBreed.find(pigeon.sub_breed_id);
+      return subBreed.name;
+    },
+    async element(pigeon) {
+      const element = await Element.find(pigeon.element_id);
+      return element.name;
+    },
+    lifeStage(pigeon) {
+      return LifeStage.find(pigeon.life_stage_id);
+    },
+    primaryBreed(pigeon) {
+      return pigeon.primary_breed;
+    },
+    feedSchedule(pigeon) {
+      return pigeon.feed_schedule;
+    },
+    lastFed(pigeon) {
+      return pigeon.last_fed;
+    }
   }
 };
 
