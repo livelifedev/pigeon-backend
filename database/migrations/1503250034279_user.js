@@ -2,6 +2,7 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use("Schema");
+const DEFAULT_RANK = "Novice Breeder";
 
 class UserSchema extends Schema {
   up() {
@@ -11,7 +12,10 @@ class UserSchema extends Schema {
         .string("breeder_name", 80)
         .notNullable()
         .unique();
-      table.string("rank", 60).notNullable();
+      table
+        .string("rank", 60)
+        .notNullable()
+        .defaultTo(DEFAULT_RANK);
       table
         .string("email", 254)
         .notNullable()

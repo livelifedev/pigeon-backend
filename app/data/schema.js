@@ -31,9 +31,9 @@ type Mutation {
   # user login
   login (email: String!, password: String!): String
   # create a new user
-  createUser (userInput: UserInput!): User
+  createUser (user: UserInput!): User
   # create a new pigeon
-  createPigeon (pigeonInput: PigeonInput!): Pigeon
+  createPigeon (pigeon: PigeonInput!): Pigeon
   # add a feeding schedule to a pigeon
   addFeedingSchedule (pigeonId: Int!, content: String!): String
 }
