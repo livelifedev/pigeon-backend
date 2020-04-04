@@ -5,8 +5,8 @@ const Pigeon = use("App/Models/Pigeon");
 const SubBreed = use("App/Models/SubBreed");
 const Element = use("App/Models/Element");
 const LifeStage = use("App/Models/LifeStage");
-const slugify = require("slugify");
 
+// TODO: create custom serializer to camelize field names with ORM
 // Define resolvers
 const resolvers = {
   Query: {
@@ -43,20 +43,20 @@ const resolvers = {
   },
   User: {
     async pigeons(user) {
-      const pigeons = await Pigeon.query()
-        .where("user_id", user.id)
-        .fetch();
-      return pigeons.toJSON();
+      const userInstance = new User();
+      userInstance.newUp(user);
+      const { rows } = await userInstance.pigeons().fetch();
+      return rows;
     },
-    // TODO: create custom serializer to camelize field names with ORM
     breederName(user) {
       return user.breeder_name;
     }
   },
   Pigeon: {
-    async owner(pigeon) {
-      const user = await User.find(pigeon.user_id);
-      return user.toJSON();
+    owner(pigeon) {
+      const pigeonInstance = new Pigeon();
+      pigeonInstance.newUp(pigeon);
+      return pigeonInstance.user().fetch();
     },
     async subBreed(pigeon) {
       const subBreed = await SubBreed.find(pigeon.sub_breed_id);
@@ -66,7 +66,6 @@ const resolvers = {
       const element = await Element.find(pigeon.element_id);
       return element.name;
     },
-    // TODO: create custom serializer to camelize field names with ORM
     primaryBreed(pigeon) {
       return pigeon.primary_breed;
     },
@@ -83,34 +82,39 @@ const resolvers = {
       const { token } = await auth.attempt(email, password);
       return token;
     },
-
     // Create new user
-    async createUser(_, { user }) {
-      const { breederName: breeder_name, email, password } = user;
-      return await User.create({ breeder_name, email, password });
+    createUser(_, { user }) {
+      return User.create({
+        breeder_name: user.breederName,
+        email: user.email,
+        password: user.password
+      });
+    },
+    // Create new pigeon
+    async createPigeon(_, { pigeon }, { auth }) {
+      try {
+        // Check if user is logged in
+        await auth.check();
+        // Get the authenticated user
+        const user = await auth.getUser();
+
+        return Pigeon.create({
+          name: pigeon.name,
+          flock: pigeon.flock,
+          gender: pigeon.gender,
+          region: pigeon.region,
+          sub_breed_id: pigeon.subBreedId,
+          element_id: pigeon.elementId,
+          dob: pigeon.dob,
+          user_id: user.id,
+          appetite: pigeon.appetite,
+          last_fed: pigeon.dob
+        });
+      } catch (error) {
+        // Throw error if user is not authenticated
+        throw new Error("Missing or invalid jwt token");
+      }
     }
-
-    // Add a new post
-    // async addPost(_, { title, content }, { auth }) {
-    //   try {
-    //     // Check if user is logged in
-    //     await auth.check();
-
-    //     // Get the authenticated user
-    //     const user = await auth.getUser();
-
-    //     // Add new post
-    //     return await Post.create({
-    //       user_id: user.id,
-    //       title,
-    //       slug: slugify(title, { lower: true }),
-    //       content
-    //     });
-    //   } catch (error) {
-    //     // Throw error if user is not authenticated
-    //     throw new Error("Missing or invalid jwt token");
-    //   }
-    // },
     //   User: {
     //     // Fetch all posts created by a user
     //     async posts(userInJson) {
@@ -137,23 +141,3 @@ const resolvers = {
 };
 
 module.exports = resolvers;
-
-// query {
-//   pigeons{
-//     id
-//     name
-//     flock
-//     gender
-//     region
-//     primaryBreed
-//     subBreed
-//     element
-//     dob
-//     bio
-//     growth
-//     health
-//     appetite
-//     feedSchedule
-//     lastFed
-//   }
-// }

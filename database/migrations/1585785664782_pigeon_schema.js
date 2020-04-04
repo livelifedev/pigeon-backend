@@ -50,15 +50,25 @@ class PigeonSchema extends Schema {
         .inTable("elements");
       table.integer("dob").notNullable();
       table.text("bio");
-      table.integer("growth").notNullable();
+      table
+        .integer("growth")
+        .notNullable()
+        .defaultTo(5);
       table
         .integer("life_stage_id")
         .unsigned()
         .notNullable()
         .references("id")
-        .inTable("life_stages");
-      table.string("health").notNullable();
-      table.enu("hunger", HUNGERS).notNullable();
+        .inTable("life_stages")
+        .defaultTo(2);
+      table
+        .string("health")
+        .notNullable()
+        .defaultTo("healthy");
+      table
+        .enu("hunger", HUNGERS)
+        .notNullable()
+        .defaultTo("neutral");
       table.integer("appetite").notNullable();
       table.json("feed_schedule");
       table.integer("last_fed").notNullable();

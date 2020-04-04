@@ -15,11 +15,11 @@ type Query {
   # list of all users
   users: [User]
   # an individual user
-  user(id: Int!): User
+  user(id: ID!): User
   # list of all pigeons
   pigeons: [Pigeon]
   # an individual pigeon
-  pigeon(id: Int!): Pigeon
+  pigeon(id: ID!): Pigeon
   # list of all elements
   elements: [Element]
   # list of all subBreeds
@@ -35,7 +35,7 @@ type Mutation {
   # create a new pigeon
   createPigeon (pigeon: PigeonInput!): Pigeon
   # add a feeding schedule to a pigeon
-  addFeedingSchedule (pigeonId: Int!, content: String!): String
+  addFeedingSchedule (pigeonId: ID!, content: String!): String
 }
 
 input UserInput {
@@ -48,20 +48,21 @@ input PigeonInput {
   flock: String!
   gender: String!
   region: String!
-  subBreed: String!
-  element: String!
-  dob: Int!
+  subBreedId: ID!
+  elementId: ID!
+  dob: Int!,
+  appetite: Int!
 }
 
 type User {
-  id: Int!
+  id: ID!
   breederName: String!
   rank: String!
   email: String!
   pigeons: [Pigeon]
 }
 type Pigeon {
-  id: Int!
+  id: ID!
   owner: User!
   name: String!
   flock: String!
@@ -80,18 +81,18 @@ type Pigeon {
   lastFed: Int!
 }
 type Element {
-  id: Int!
+  id: ID!
   name: String!
   description: String!
 }
 type LifeStage {
-  id: Int!
+  id: ID!
   stage: Int!
   name: String!
   description: String!
 }
 type SubBreed {
-  id: Int!
+  id: ID!
   name: String!
   description: String!
 }
