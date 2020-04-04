@@ -10,6 +10,11 @@ const slugify = require("slugify");
 // Define resolvers
 const resolvers = {
   Query: {
+    // Fetch all users
+    async users() {
+      const users = await User.all();
+      return users.toJSON();
+    },
     // Get a user by ID
     async user(_, { id }) {
       const user = await User.find(id);
@@ -36,6 +41,18 @@ const resolvers = {
       return subBreeds.toJSON();
     }
   },
+  User: {
+    async pigeons(user) {
+      const pigeons = await Pigeon.query()
+        .where("user_id", user.id)
+        .fetch();
+      return pigeons.toJSON();
+    },
+    // TODO: create custom serializer to camelize field names with ORM
+    breederName(user) {
+      return user.breeder_name;
+    }
+  },
   Pigeon: {
     async owner(pigeon) {
       const user = await User.find(pigeon.user_id);
@@ -45,8 +62,19 @@ const resolvers = {
       const subBreed = await SubBreed.find(pigeon.sub_breed_id);
       return subBreed.name;
     },
+    async element(pigeon) {
+      const element = await Element.find(pigeon.element_id);
+      return element.name;
+    },
+    // TODO: create custom serializer to camelize field names with ORM
     primaryBreed(pigeon) {
       return pigeon.primary_breed;
+    },
+    feedSchedule(pigeon) {
+      return pigeon.feed_schedule;
+    },
+    lastFed(pigeon) {
+      return pigeon.last_fed;
     }
   }
   // Mutation: {
@@ -108,3 +136,23 @@ const resolvers = {
 };
 
 module.exports = resolvers;
+
+// query {
+//   pigeons{
+//     id
+//     name
+//     flock
+//     gender
+//     region
+//     primaryBreed
+//     subBreed
+//     element
+//     dob
+//     bio
+//     growth
+//     health
+//     appetite
+//     feedSchedule
+//     lastFed
+//   }
+// }

@@ -12,6 +12,8 @@ schema {
 
 # root query for Guild of Pigeon Breeders app
 type Query {
+  # list of all users
+  users: [User]
   # an individual user
   user(id: Int!): User
   # list of all pigeons
@@ -74,7 +76,7 @@ type Pigeon {
   lifeStage: LifeStage!
   health: String!
   appetite: Int!
-  feedSchedule: String!
+  feedSchedule: String
   lastFed: Int!
 }
 type Element {
