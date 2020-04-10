@@ -18,7 +18,7 @@ module.exports = {
   */
   origin: [
     "http://localhost:8080",
-    "http://guild-of-pigeon-breeders.s3-website-ap-southeast-2.amazonaws.com/"
+    "http://guild-of-pigeon-breeders.s3-website-ap-southeast-2.amazonaws.com"
   ],
 
   /*
