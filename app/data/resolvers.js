@@ -99,9 +99,11 @@ const resolvers = {
         if (user.id !== pigeon.user_id)
           throw new Error("Pigeon does not belong to you");
 
-        pigeon.feed_schedule = JSON.stringify(content);
+        pigeon.feed_schedule = content;
 
-        return pigeon.save();
+        await pigeon.save();
+
+        return pigeon.feed_schedule;
       } catch (error) {
         throw new Error(error);
       }

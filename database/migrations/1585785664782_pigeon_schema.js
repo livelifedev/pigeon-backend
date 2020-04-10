@@ -15,7 +15,6 @@ const REGIONS = [
   "South America",
   "Unknown"
 ];
-const HUNGERS = ["overstuffed", "full", "neutral", "hungry", "starving"];
 
 class PigeonSchema extends Schema {
   up() {
@@ -64,13 +63,9 @@ class PigeonSchema extends Schema {
       table
         .string("health")
         .notNullable()
-        .defaultTo("healthy");
-      table
-        .enu("hunger", HUNGERS)
-        .notNullable()
-        .defaultTo("neutral");
+        .defaultTo("Healthy");
       table.integer("appetite").notNullable();
-      table.json("feed_schedule");
+      table.text("feed_schedule");
       table.integer("last_fed").notNullable();
       table.timestamps();
     });

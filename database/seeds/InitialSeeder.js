@@ -63,11 +63,10 @@ class InitialSeeder {
         sub_breed_id: 8,
         element_id: 5,
         dob: 1000000000,
-        bio: "",
-        growth: 0,
+        bio: null,
+        growth: 100,
         life_stage_id: 1,
         health: "Godly",
-        hunger: "neutral",
         appetite: 4,
         feed_schedule: null,
         last_fed: 1000000000

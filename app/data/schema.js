@@ -74,7 +74,7 @@ type Pigeon {
   subBreed: String!
   element: String!
   dob: Int!
-  bio: String!
+  bio: String
   growth: Int!
   lifeStage: LifeStage!
   health: String!
