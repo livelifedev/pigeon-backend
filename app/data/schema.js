@@ -38,6 +38,8 @@ type Mutation {
   createPigeon (pigeon: PigeonInput!): Pigeon
   # add a feeding schedule to a pigeon
   addFeedingSchedule (pigeonId: ID!, content: String!): String
+  # update pigeon values
+  updatePigeon (pigeonId: ID!, growth: Int, health: String, lastFed: Int): Pigeon
 }
 
 input UserInput {

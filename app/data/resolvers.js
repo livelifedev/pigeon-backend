@@ -48,7 +48,7 @@ const resolvers = {
     async subBreeds() {
       const subBreeds = await SubBreed.all();
       return subBreeds.toJSON();
-    }
+    },
   },
 
   Mutation: {
@@ -62,7 +62,7 @@ const resolvers = {
       await User.create({
         breeder_name: user.breederName,
         email: user.email,
-        password: user.password
+        password: user.password,
       });
 
       const { token } = await auth.attempt(user.email, user.password);
@@ -84,7 +84,7 @@ const resolvers = {
           dob: pigeon.dob,
           user_id: user.id,
           appetite: pigeon.appetite,
-          last_fed: pigeon.dob
+          last_fed: pigeon.dob,
         });
       } catch (error) {
         throw new Error(error);
@@ -107,7 +107,27 @@ const resolvers = {
       } catch (error) {
         throw new Error(error);
       }
-    }
+    },
+    async updatePigeon(_, { pigeonId, growth, health, lastFed }, { auth }) {
+      try {
+        await auth.check();
+        const user = await auth.getUser();
+        const pigeon = await Pigeon.find(pigeonId);
+
+        if (user.id !== pigeon.user_id)
+          throw new Error("Pigeon does not belong to you");
+
+        if (growth) pigeon.growth = pigeon.growth + growth;
+        if (health) pigeon.health = health;
+        if (lastFed) pigeon.lastFed = lastFed;
+
+        await pigeon.save();
+
+        return pigeon;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
   },
 
   User: {
@@ -119,7 +139,7 @@ const resolvers = {
     },
     breederName(user) {
       return user.breeder_name;
-    }
+    },
   },
 
   Pigeon: {
@@ -145,8 +165,8 @@ const resolvers = {
     },
     lastFed(pigeon) {
       return pigeon.last_fed;
-    }
-  }
+    },
+  },
 };
 
 module.exports = resolvers;
