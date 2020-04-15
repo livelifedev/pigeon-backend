@@ -119,7 +119,7 @@ const resolvers = {
 
         if (growth) pigeon.growth = pigeon.growth + growth;
         if (health) pigeon.health = health;
-        if (lastFed) pigeon.lastFed = lastFed;
+        if (lastFed) pigeon.last_fed = lastFed;
 
         await pigeon.save();
 
